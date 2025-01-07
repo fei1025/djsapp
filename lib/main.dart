@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_demo/background_service.dart';
+import 'package:flutter_demo/service/pedometer_service.dart';
 import 'dart:async';
 import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
 import 'dart:io';
@@ -8,8 +8,7 @@ import 'package:wakelock_plus/wakelock_plus.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await initializeService();
-
+  PedometerService.instance.init();
   runApp(MyApp());
 }
 class MyApp extends StatelessWidget {
@@ -33,9 +32,23 @@ class _CountdownPageState extends State<CountdownPage> {
   @override
   void initState() {
     WidgetsFlutterBinding.ensureInitialized();
-
+    _startPedometerService();
     super.initState();
     _startCountdown();
+  }
+
+  void _startPedometerService() async {
+    try {
+      // already started
+      if (await PedometerService.instance.isRunningService) {
+        return;
+      }
+
+      PedometerService.instance.start();
+    } catch (e, s) {
+      print(e);
+      print(s);
+    }
   }
 
   void _startCountdown() {
@@ -96,14 +109,7 @@ class _CountdownPageState extends State<CountdownPage> {
               onPressed: _stopAlarmAndExit,
               child: const Text("停止音乐并退出"),
             ),
-            ElevatedButton(
-              onPressed: startBackgroundService,
-              child: const Text("开始"),
-            ),
-            ElevatedButton(
-              onPressed: stopBackgroundService,
-              child: const Text("停止"),
-            ),
+
           ],
         ),
       ),
