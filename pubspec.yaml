@@ -28,13 +28,17 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
+
   flutter:
     sdk: flutter
+   # 播放音乐
   flutter_ringtone_player: ^4.0.0+3
   wakelock_plus: ^1.2.10
   flutter_foreground_task: ^8.17.0
   permission_handler: ^11.3.1
-  pedometer: ^4.0.2
+  # 小窗
+  home_widget: ^0.7.0
+
 
 
   # The following adds the Cupertino Icons font to your application.

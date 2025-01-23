@@ -1,10 +1,18 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_demo/service/pedometer_service.dart';
 import 'dart:async';
 import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
+import 'package:home_widget/home_widget.dart';
 import 'dart:io';
 
 import 'package:wakelock_plus/wakelock_plus.dart';
+
+import 'my_home_widget/home_syc_widget.dart';
+
+
+
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -32,10 +40,36 @@ class _CountdownPageState extends State<CountdownPage> {
   @override
   void initState() {
     WidgetsFlutterBinding.ensureInitialized();
+    HomeWidget.registerInteractivityCallback(interactiveCallback);
+
+    // 开启前台服务
     _startPedometerService();
+    // 开始倒计时
+    //_startCountdown();
     super.initState();
-    _startCountdown();
+
   }
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _checkForWidgetLaunch();
+    HomeWidget.widgetClicked.listen(_launchedFromWidget);
+  }
+  void _checkForWidgetLaunch() {
+    HomeWidget.initiallyLaunchedFromHomeWidget().then(_launchedFromWidget);
+  }
+  void _launchedFromWidget(Uri? uri) {
+    if (uri != null) {
+      showDialog(
+        context: context,
+        builder: (buildContext) => AlertDialog(
+          title: const Text('App started from HomeScreenWidget'),
+          content: Text('Here is the URI: $uri'),
+        ),
+      );
+    }
+  }
+
 
   void _startPedometerService() async {
     try {
@@ -109,7 +143,6 @@ class _CountdownPageState extends State<CountdownPage> {
               onPressed: _stopAlarmAndExit,
               child: const Text("停止音乐并退出"),
             ),
-
           ],
         ),
       ),

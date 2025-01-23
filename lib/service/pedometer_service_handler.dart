@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:developer' as dev;
 
 import 'package:flutter_foreground_task/flutter_foreground_task.dart';
-import 'package:pedometer/pedometer.dart';
 
 
 @pragma('vm:entry-point')
@@ -33,11 +32,5 @@ class PedometerServiceHandler extends TaskHandler {
     dev.log("这是测试id啊啊啊: $id");
   }
 
-  void _onStepCount(StepCount event) {
 
-  }
-
-  void _onPedestrianStatusChanged(PedestrianStatus event) {
-
-  }
 }

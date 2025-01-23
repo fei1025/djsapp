@@ -168,6 +168,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  home_widget:
+    dependency: "direct main"
+    description:
+      name: home_widget
+      sha256: b313e3304c0429669fddf1286e1fbf61a64b873f38ba30b3eb890ef0d7560b12
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "0.7.0"
   http:
     dependency: transitive
     description:
@@ -328,14 +336,6 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "2.3.0"
-  pedometer:
-    dependency: "direct main"
-    description:
-      name: pedometer
-      sha256: "11cfba2de961893d79e65b7773b9462bc53979626b49a86972d63b40217969ee"
-      url: "https://pub.flutter-io.cn"
-    source: hosted
-    version: "4.0.2"
   permission_handler:
     dependency: "direct main"
     description:
