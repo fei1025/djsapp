@@ -9,14 +9,14 @@ import 'dart:io';
 
 import 'package:wakelock_plus/wakelock_plus.dart';
 
+import 'init_info.dart';
 import 'my_home_widget/home_syc_widget.dart';
 
 
 
 
-Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  PedometerService.instance.init();
+void main() {
+  InitInfo().initializeData();
   runApp(MyApp());
 }
 class MyApp extends StatelessWidget {
@@ -59,6 +59,7 @@ class _CountdownPageState extends State<CountdownPage> {
     HomeWidget.initiallyLaunchedFromHomeWidget().then(_launchedFromWidget);
   }
   void _launchedFromWidget(Uri? uri) {
+    print("uri----------------------:$uri");
     if (uri != null) {
       showDialog(
         context: context,
@@ -146,6 +147,24 @@ class _CountdownPageState extends State<CountdownPage> {
           ],
         ),
       ),
+        bottomNavigationBar:BottomNavigationBar(
+          onTap: (index) {
+            if (index == 0) {
+              Navigator.push(context, MaterialPageRoute(builder: (context) => CountdownPage()));
+            } else if (index == 1) {
+              Navigator.push(context, MaterialPageRoute(builder: (context) => Placeholder()));
+            }
+          },
+          items: [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: '首页',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.timer_outlined),
+            label: '我的时间',
+          ),
+        ],)
     );
   }
 }

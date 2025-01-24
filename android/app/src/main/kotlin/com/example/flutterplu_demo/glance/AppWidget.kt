@@ -70,7 +70,7 @@ class AppWidget : GlanceAppWidget() {
                     text = "+",
                     onClick = actionStartActivity<MainActivity>(
                         context,
-                        Uri.parse("homeWidgetExample://{'type':'addTime'}")
+                        Uri.parse("homeWidgetExample://message?message={'type':'addTime'}")
                     ), // 点击启动主页面
                     modifier = GlanceModifier.size(40.dp)
                 )

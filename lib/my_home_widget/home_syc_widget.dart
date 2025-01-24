@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 @pragma("vm:entry-point")
 Future<void> interactiveCallback(Uri? data) async {
 
@@ -30,3 +32,4 @@ Future<void> interactiveCallback(Uri? data) async {
   //   }
   // }
 }
+
