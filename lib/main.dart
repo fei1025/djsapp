@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_demo/page/home_page.dart';
 import 'package:flutter_demo/service/pedometer_service.dart';
 import 'dart:async';
 import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
@@ -123,37 +124,46 @@ class _CountdownPageState extends State<CountdownPage> {
     WakelockPlus.disable();
     super.dispose();
   }
+  int _selectedIndex = 0; // 当前选中的索引
+  final List<Widget> _pages = [
+    Center(child:HomePage()),
+    Center(child: Text('搜索内容', style: TextStyle(fontSize: 24))),
+  ];
 
   @override
   Widget build(BuildContext context) {
+
     final minutes = (_remainingSeconds ~/ 60).toString().padLeft(2, '0');
     final seconds = (_remainingSeconds % 60).toString().padLeft(2, '0');
+    // Center(
+    //   child: Column(
+    //     mainAxisAlignment: MainAxisAlignment.center,
+    //     children: [
+    //       Text(
+    //         "$minutes:$seconds",
+    //         style: TextStyle(fontSize: 48, fontWeight: FontWeight.bold),
+    //       ),
+    //       const SizedBox(height: 20),
+    //       ElevatedButton(
+    //         onPressed: _stopAlarmAndExit,
+    //         child: const Text("停止音乐并退出"),
+    //       ),
+    //     ],
+    //   ),
+    // ),
+
 
     return Scaffold(
       appBar: AppBar(title: const Text("5分钟倒计时")),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              "$minutes:$seconds",
-              style: TextStyle(fontSize: 48, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: _stopAlarmAndExit,
-              child: const Text("停止音乐并退出"),
-            ),
-          ],
-        ),
-      ),
+      body: _pages[_selectedIndex],
         bottomNavigationBar:BottomNavigationBar(
+          currentIndex: _selectedIndex, // 当前选中的索引
           onTap: (index) {
-            if (index == 0) {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => CountdownPage()));
-            } else if (index == 1) {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => Placeholder()));
-            }
+            print("danxuanle$index");
+            setState(() {
+              _selectedIndex= index;
+              print("danxuanle$_selectedIndex");
+            });
           },
           items: [
           BottomNavigationBarItem(
