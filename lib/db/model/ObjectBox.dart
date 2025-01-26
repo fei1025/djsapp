@@ -11,11 +11,13 @@ class ObjectBox {
   /// The Store of this app.
   late final Store store;
   late final Box<TimeData> timeDataBox;
+  late final Box<SystemSettings> systemSettings;
 
 
   ObjectBox._create(this.store) {
     // Add any additional setup code, e.g. build queries.
     timeDataBox=Box<TimeData>(store);
+    systemSettings=Box<SystemSettings>(store);
   }
 
   /// Create an instance of ObjectBox to use throughout the app.

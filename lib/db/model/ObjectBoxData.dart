@@ -19,3 +19,14 @@ class TimeData{
   String? izDefault;
   TimeData({this.titleName,this.remainingSeconds,this.createdDate,this.nextId,this.type,this.remake,this.izDefault});
 }
+
+@Entity()
+class SystemSettings{
+  @Id()
+  int id=0;
+  // 是否开机默认启动计时器
+  String startTime="0";
+
+}
+
+
