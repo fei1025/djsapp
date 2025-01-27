@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_demo/page/demo.dart';
 import 'package:flutter_demo/page/showTime.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -12,42 +13,67 @@ class MyTimePage extends StatefulWidget {
 
 class _MyTimePageState extends State<MyTimePage> {
 
-  _addTime(){
-    showDialog(context: context, builder:(context){
-      return ShowTime(success: (a){
-        print(a);
-      });
-    });
-  }
   _createTimerDate() {
+    final _formKey = GlobalKey<FormState>();
+    final TextEditingController _timeController = TextEditingController();
+     int? time1 = null;
     showDialog(
         context: context,
         builder: (context) {
           return AlertDialog(
             title: Text(AppLocalizations.of(context)!.createTime),
-            content: Column(
-              children: [
-                Form(
-                  child: Column(
-                    children: [
-                      TextFormField(
+            content: SizedBox(
+              height: 200,
+              child: Column(
+                children: [
+                  Form(
+                    key: _formKey,
+                    child: Column(
+                      children: [
+                        TextFormField(
+                            decoration: InputDecoration(
+                          labelText: "title",
+                        )),
+                        TextFormField(
+                          controller: _timeController,
+                          onTap: () async {
+                            // 弹出对话框
+                            await showDialog(
+                              context: context,
+                              builder: (context) {
+                                return ShowTime(time:time1,success: (time) {
+                                  setState(() {
+                                    time1=time;
+                                    final hours = (time ~/ 3600).toString().padLeft(2, '0'); // 计算小时
+                                    final minutes = ((time % 3600) ~/ 60).toString().padLeft(2, '0'); // 计算分钟
+                                    final seconds = (time % 60).toString().padLeft(2, '0'); // 计算秒
+                                    _timeController.text = "$hours:$minutes:$seconds"; // 更新到输入框
+                                  });
+                                });
+                              },
+                            );
+
+                          },
+                          readOnly: true, // 设置为只读
                           decoration: InputDecoration(
-                        labelText: "title",
-                      )),
-                      TextButton(onPressed: (){
-                        _addTime();
-                      }, child: Text("这添加数据"))
-                      
-                    ],
-                  ),
-                )
-              ],
+                            labelText: "Time",
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                ],
+              ),
             ),
             actions: [
               TextButton(
                   onPressed: () {
+                    if(_formKey.currentState!.validate()){
+                      _formKey.currentState!.save();
+                    }
                     Navigator.of(context).pop();
                   },
+
                   child: Text(AppLocalizations.of(context)!.cancel)),
               TextButton(
                   onPressed: () {

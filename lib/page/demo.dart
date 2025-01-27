@@ -1,28 +1,18 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class ShowTime extends StatefulWidget {
-  final Function(int save) success;
-  int? time;
-
-  ShowTime({Key? key, required this.success,this.time}) : super(key: key);
+class CustomCupertinoTimerPicker extends StatefulWidget {
+  const CustomCupertinoTimerPicker({Key? key}) : super(key: key);
 
   @override
-  _ShowTimeState createState() =>_ShowTimeState();
+  _CustomCupertinoTimerPickerState createState() =>
+      _CustomCupertinoTimerPickerState();
 }
 
-class _ShowTimeState
-    extends State<ShowTime> {
-  Duration _date = const Duration(seconds: 0);
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    if(widget.time!=null){
-      _date=Duration(seconds: widget.time!);
-    }
+class _CustomCupertinoTimerPickerState
+    extends State<CustomCupertinoTimerPicker> {
+  Duration _date = const Duration(seconds: 30);
 
-  }
   @override
   Widget build(BuildContext context) {
     return Dialog(
@@ -31,10 +21,17 @@ class _ShowTimeState
       ),
       child: Container(
         padding: const EdgeInsets.all(16.0),
-        width: MediaQuery.of(context).size.width * 0.3, // 宽度为屏幕的 80%
+        width: MediaQuery.of(context).size.width * 0.8, // 宽度为屏幕的 80%
         child: Column(
           mainAxisSize: MainAxisSize.min, // 高度自适应内容
           children: <Widget>[
+            Text(
+              '当前时间: ${_date.toString()}',
+              style: const TextStyle(color: Colors.grey, fontSize: 16),
+            ),
+            const SizedBox(height: 16),
+            _buildInfoTitle('选择时间'),
+            const SizedBox(height: 8),
             buildPicker(CupertinoTimerPickerMode.hms),
             const SizedBox(height: 16),
             Row(
@@ -46,12 +43,7 @@ class _ShowTimeState
                 ),
                 ElevatedButton(
                   onPressed: () {
-                    if(_date.inSeconds<=0){
-                      showSnackBar(context);
-                      return;
-                    }
-                    widget.success(_date.inSeconds);
-                    Navigator.of(context).pop(); // 确认并返回选中的时间
+                    Navigator.of(context).pop(_date); // 确认并返回选中的时间
                   },
                   child: const Text('确认'),
                 ),
@@ -63,26 +55,12 @@ class _ShowTimeState
     );
   }
 
-
-  void showSnackBar(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('提示'),
-          content: Text('时间不能小于等于0'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop(); // 关闭对话框
-              },
-              child: Text('确定'),
-            ),
-          ],
-        );
-      },
+  Widget _buildInfoTitle(String info) {
+    return Text(
+      info,
+      style: const TextStyle(
+          color: Colors.blue, fontSize: 16, fontWeight: FontWeight.bold),
     );
-
   }
 
   Widget buildPicker(CupertinoTimerPickerMode mode) {

@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_demo/my_app_state.dart';
 import 'package:flutter_demo/page/TimerManager.dart';
+import 'package:flutter_demo/page/demo.dart';
 import 'package:flutter_demo/page/home_page.dart';
 import 'package:flutter_demo/service/pedometer_service.dart';
 import 'dart:async';
@@ -66,6 +67,7 @@ class _CountdownPageState extends State<CountdownPage> {
     pages = [
       Center(child:homepage),
       const Center(child: MyTimePage()),
+      const Center(child: CustomCupertinoTimerPicker()),
     ];
 
     // 开启前台服务
@@ -167,6 +169,10 @@ class _CountdownPageState extends State<CountdownPage> {
           const BottomNavigationBarItem(
             icon: Icon(Icons.home),
             label: '首页',
+          ),
+          BottomNavigationBarItem(
+            icon: const Icon(Icons.timer_outlined),
+            label: AppLocalizations.of(context)!.myTime,
           ),
           BottomNavigationBarItem(
             icon: const Icon(Icons.timer_outlined),
