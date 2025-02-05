@@ -1,8 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_demo/db/model/ObjectBoxData.dart';
+import 'package:flutter_demo/main.dart';
+import 'package:flutter_demo/my_app_state.dart';
 import 'package:flutter_demo/page/demo.dart';
 import 'package:flutter_demo/page/showTime.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:provider/provider.dart';
 
 class MyTimePage extends StatefulWidget {
   const MyTimePage({super.key});
@@ -89,6 +93,9 @@ class _MyTimePageState extends State<MyTimePage> {
 
   @override
   Widget build(BuildContext context) {
+    var appState =context.watch<MyAppState>();
+    List<TimeData>  list  = appState.timeDataList;
+
     return Scaffold(
       appBar: AppBar(title: const Text('My Time'), actions: <Widget>[
         IconButton(
@@ -98,9 +105,65 @@ class _MyTimePageState extends State<MyTimePage> {
           },
         )
       ]),
-      body: Center(
-        child: Text("time"),
-      ),
+      body: Wrap(
+        children: [
+          ...list.map((e) => Card(
+            elevation: 3.0,
+            child: ListTile(
+              title: Text(e.titleName??""),
+              onTap: () {
+
+              },
+            ),
+          )),
+          Card(
+            elevation: 3.0,    // 卡片的阴影
+            shadowColor: Colors.white,
+            child:AddContent(context),
+          ),
+        ],
+      )
     );
   }
+
+  Widget AddContent(BuildContext context) {
+    return InkWell(
+        borderRadius: BorderRadius.circular(15), // 水波纹的圆角
+        onTap: () async {
+          //WidgetInfo widgetInfo= WidgetInfo(titleName:"新增", dataInfo: []);
+          //Navigator.push(context,MaterialPageRoute(builder: (context) => WidgetDataListPage(widgetInfo: widgetInfo,)));
+          //context.read<Widget_pageCubit>().getAllData(context);
+          addTimeData(context);
+        },
+        child: Container(
+            width: 150,
+            height: 0.618 * 150,
+            padding: const EdgeInsets.all(10),
+            child: const Row(
+              children: [
+                Icon(Icons.add),
+                Text(
+                  "新增",
+                  style: TextStyle(fontSize: 20),
+                )
+              ],
+            ))
+    );
+  }
+  void addTimeData(BuildContext context) {
+    var appState = Provider.of<MyAppState>(context, listen: false);
+
+    // 创建新的 TimeData 实例
+    TimeData timeData = TimeData();
+    timeData.titleName = "title";
+
+    // 创建新的列表，避免直接修改原列表
+    List<TimeData> updatedList = List.from(appState.timeDataList);
+    updatedList.add(timeData);
+
+    // 设置新的列表
+    appState.setTimeDataList(updatedList);
+  }
+
+
 }

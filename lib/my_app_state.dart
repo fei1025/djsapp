@@ -27,4 +27,9 @@ class MyAppState extends ChangeNotifier {
     timeDataList=list;
     notifyListeners();
   }
+
+  void addTimeData(TimeData timeData) {
+    timeDataList.add(timeData);
+    notifyListeners(); // 触发 UI 更新
+  }
 }
