@@ -5,7 +5,7 @@
   "entities": [
     {
       "id": "1:6755882917164237029",
-      "lastPropertyId": "7:3412219069524884181",
+      "lastPropertyId": "8:1935334757692488403",
       "name": "TimeData",
       "properties": [
         {
@@ -43,12 +43,36 @@
           "id": "7:3412219069524884181",
           "name": "remake",
           "type": 9
+        },
+        {
+          "id": "8:1935334757692488403",
+          "name": "izDefault",
+          "type": 9
+        }
+      ],
+      "relations": []
+    },
+    {
+      "id": "2:3396478819445059278",
+      "lastPropertyId": "2:8022105537546931087",
+      "name": "SystemSettings",
+      "properties": [
+        {
+          "id": "1:6060417501303521068",
+          "name": "id",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:8022105537546931087",
+          "name": "startTime",
+          "type": 9
         }
       ],
       "relations": []
     }
   ],
-  "lastEntityId": "1:6755882917164237029",
+  "lastEntityId": "2:3396478819445059278",
   "lastIndexId": "0:0",
   "lastRelationId": "0:0",
   "lastSequenceId": "0:0",

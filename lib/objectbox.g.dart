@@ -15,6 +15,7 @@ import 'package:objectbox/objectbox.dart' as obx;
 import 'package:objectbox_flutter_libs/objectbox_flutter_libs.dart';
 
 import 'db/model/ObjectBoxData.dart';
+import 'db/model/dataModel/SystemSettings.dart';
 
 export 'package:objectbox/objectbox.dart'; // so that callers only have to import this file
 
@@ -22,7 +23,7 @@ final _entities = <obx_int.ModelEntity>[
   obx_int.ModelEntity(
       id: const obx_int.IdUid(1, 6755882917164237029),
       name: 'TimeData',
-      lastPropertyId: const obx_int.IdUid(7, 3412219069524884181),
+      lastPropertyId: const obx_int.IdUid(8, 1935334757692488403),
       flags: 0,
       properties: <obx_int.ModelProperty>[
         obx_int.ModelProperty(
@@ -58,6 +59,30 @@ final _entities = <obx_int.ModelEntity>[
         obx_int.ModelProperty(
             id: const obx_int.IdUid(7, 3412219069524884181),
             name: 'remake',
+            type: 9,
+            flags: 0),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(8, 1935334757692488403),
+            name: 'izDefault',
+            type: 9,
+            flags: 0)
+      ],
+      relations: <obx_int.ModelRelation>[],
+      backlinks: <obx_int.ModelBacklink>[]),
+  obx_int.ModelEntity(
+      id: const obx_int.IdUid(2, 3396478819445059278),
+      name: 'SystemSettings',
+      lastPropertyId: const obx_int.IdUid(2, 8022105537546931087),
+      flags: 0,
+      properties: <obx_int.ModelProperty>[
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(1, 6060417501303521068),
+            name: 'id',
+            type: 6,
+            flags: 1),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(2, 8022105537546931087),
+            name: 'startTime',
             type: 9,
             flags: 0)
       ],
@@ -100,7 +125,7 @@ Future<obx.Store> openStore(
 obx_int.ModelDefinition getObjectBoxModel() {
   final model = obx_int.ModelInfo(
       entities: _entities,
-      lastEntityId: const obx_int.IdUid(1, 6755882917164237029),
+      lastEntityId: const obx_int.IdUid(2, 3396478819445059278),
       lastIndexId: const obx_int.IdUid(0, 0),
       lastRelationId: const obx_int.IdUid(0, 0),
       lastSequenceId: const obx_int.IdUid(0, 0),
@@ -129,7 +154,10 @@ obx_int.ModelDefinition getObjectBoxModel() {
               object.type == null ? null : fbb.writeString(object.type!);
           final remakeOffset =
               object.remake == null ? null : fbb.writeString(object.remake!);
-          fbb.startTable(8);
+          final izDefaultOffset = object.izDefault == null
+              ? null
+              : fbb.writeString(object.izDefault!);
+          fbb.startTable(9);
           fbb.addInt64(0, object.id);
           fbb.addOffset(1, titleNameOffset);
           fbb.addInt64(2, object.remainingSeconds);
@@ -137,6 +165,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
           fbb.addInt64(4, object.nextId);
           fbb.addOffset(5, typeOffset);
           fbb.addOffset(6, remakeOffset);
+          fbb.addOffset(7, izDefaultOffset);
           fbb.finish(fbb.endTable());
           return object.id;
         },
@@ -158,13 +187,44 @@ obx_int.ModelDefinition getObjectBoxModel() {
               .vTableGetNullable(buffer, rootOffset, 14);
           final remakeParam = const fb.StringReader(asciiOptimization: true)
               .vTableGetNullable(buffer, rootOffset, 16);
+          final izDefaultParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGetNullable(buffer, rootOffset, 18);
           final object = TimeData(
               titleName: titleNameParam,
               remainingSeconds: remainingSecondsParam,
               createdDate: createdDateParam,
               nextId: nextIdParam,
               type: typeParam,
-              remake: remakeParam)
+              remake: remakeParam,
+              izDefault: izDefaultParam)
+            ..id = const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0);
+
+          return object;
+        }),
+    SystemSettings: obx_int.EntityDefinition<SystemSettings>(
+        model: _entities[1],
+        toOneRelations: (SystemSettings object) => [],
+        toManyRelations: (SystemSettings object) => {},
+        getId: (SystemSettings object) => object.id,
+        setId: (SystemSettings object, int id) {
+          object.id = id;
+        },
+        objectToFB: (SystemSettings object, fb.Builder fbb) {
+          final startTimeOffset = object.startTime == null
+              ? null
+              : fbb.writeString(object.startTime!);
+          fbb.startTable(3);
+          fbb.addInt64(0, object.id);
+          fbb.addOffset(1, startTimeOffset);
+          fbb.finish(fbb.endTable());
+          return object.id;
+        },
+        objectFromFB: (obx.Store store, ByteData fbData) {
+          final buffer = fb.BufferContext(fbData);
+          final rootOffset = buffer.derefObject(0);
+          final startTimeParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGetNullable(buffer, rootOffset, 6);
+          final object = SystemSettings(startTime: startTimeParam)
             ..id = const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0);
 
           return object;
@@ -203,4 +263,19 @@ class TimeData_ {
   /// See [TimeData.remake].
   static final remake =
       obx.QueryStringProperty<TimeData>(_entities[0].properties[6]);
+
+  /// See [TimeData.izDefault].
+  static final izDefault =
+      obx.QueryStringProperty<TimeData>(_entities[0].properties[7]);
+}
+
+/// [SystemSettings] entity fields to define ObjectBox queries.
+class SystemSettings_ {
+  /// See [SystemSettings.id].
+  static final id =
+      obx.QueryIntegerProperty<SystemSettings>(_entities[1].properties[0]);
+
+  /// See [SystemSettings.startTime].
+  static final startTime =
+      obx.QueryStringProperty<SystemSettings>(_entities[1].properties[1]);
 }

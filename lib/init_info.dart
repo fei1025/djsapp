@@ -5,10 +5,10 @@ import 'db/model/ObjectBox.dart';
 import 'db/overallModel.dart';
 
 class InitInfo {
-  void initializeData() async {
+  Future<void> initializeData() async {
+    WidgetsFlutterBinding.ensureInitialized();
     ObjectBox objectbox = await ObjectBox.create();
     setOB(objectbox);
-    WidgetsFlutterBinding.ensureInitialized();
     PedometerService.instance.init();
   }
 }

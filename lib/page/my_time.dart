@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_demo/db/model/ObjectBoxData.dart';
+import 'package:flutter_demo/db/overallModel.dart';
 import 'package:flutter_demo/main.dart';
 import 'package:flutter_demo/my_app_state.dart';
 import 'package:flutter_demo/page/demo.dart';
@@ -16,6 +17,36 @@ class MyTimePage extends StatefulWidget {
 }
 
 class _MyTimePageState extends State<MyTimePage> {
+
+  @override
+  void initState() {
+    // TODO: implement initState
+
+    super.initState();
+    // 使用 addPostFrameCallback 将操作推迟到框架完成当前构建后执行
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      List<TimeData> timeDataList =[];
+      _getBox().getAll().forEach((action) {
+        timeDataList.add(action);
+      });
+      context.read<MyAppState>().setTimeDataList(timeDataList);
+    });
+  }
+
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // _getBox().getAll().then((value) {
+    //   context.read<MyAppState>().setTimeDataList(value);
+    // });
+
+
+  }
+
+  _getBox(){
+    return objectbox.timeDataBox;
+  }
 
   _createTimerDate() {
     final _formKey = GlobalKey<FormState>();
@@ -105,51 +136,34 @@ class _MyTimePageState extends State<MyTimePage> {
           },
         )
       ]),
-      body: Wrap(
-        children: [
-          ...list.map((e) => Card(
+      body:  ListView.builder(
+        itemCount: list.length,
+        itemBuilder: (context, index) {
+          return Card(
             elevation: 3.0,
             child: ListTile(
-              title: Text(e.titleName??""),
+              title: Text(list[index].titleName ?? ""),
               onTap: () {
-
+                // 处理点击事件
               },
             ),
-          )),
-          Card(
-            elevation: 3.0,    // 卡片的阴影
-            shadowColor: Colors.white,
-            child:AddContent(context),
-          ),
-        ],
-      )
+          );
+        },
+      ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            //Navigator.push(context,MaterialPageRoute(builder: (context) => DemoPage()));
+            print("object");
+
+            addTimeData(context);
+
+          },
+          child: const Icon(Icons.add),
+        )
     );
   }
 
-  Widget AddContent(BuildContext context) {
-    return InkWell(
-        borderRadius: BorderRadius.circular(15), // 水波纹的圆角
-        onTap: () async {
-          //WidgetInfo widgetInfo= WidgetInfo(titleName:"新增", dataInfo: []);
-          //Navigator.push(context,MaterialPageRoute(builder: (context) => WidgetDataListPage(widgetInfo: widgetInfo,)));
-          //context.read<Widget_pageCubit>().getAllData(context);
-          addTimeData(context);
-        },
-        child: Container(
-            width: 150,
-            height: 0.618 * 150,
-            padding: const EdgeInsets.all(10),
-            child: const Row(
-              children: [
-                Icon(Icons.add),
-                Text(
-                  "新增",
-                  style: TextStyle(fontSize: 20),
-                )
-              ],
-            ))
-    );
-  }
+
   void addTimeData(BuildContext context) {
     var appState = Provider.of<MyAppState>(context, listen: false);
 
@@ -163,6 +177,7 @@ class _MyTimePageState extends State<MyTimePage> {
 
     // 设置新的列表
     appState.setTimeDataList(updatedList);
+    _getBox().put(timeData);
   }
 
 

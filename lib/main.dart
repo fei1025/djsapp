@@ -22,8 +22,8 @@ import 'page/my_time.dart';
 
 
 
-void main() {
-  InitInfo().initializeData();
+void main() async {
+  await InitInfo().initializeData();
   runApp(
     ChangeNotifierProvider(
       create: (_) => MyAppState(),

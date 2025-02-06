@@ -1,4 +1,5 @@
 
+import 'package:flutter_demo/db/model/dataModel/SystemSettings.dart';
 import 'package:flutter_demo/objectbox.g.dart';
 import 'package:objectbox/objectbox.dart';
 import 'package:path_provider/path_provider.dart';
@@ -23,8 +24,9 @@ class ObjectBox {
   /// Create an instance of ObjectBox to use throughout the app.
   static Future<ObjectBox> create() async {
     final docsDir = await getApplicationDocumentsDirectory();
-    //final store = await openStore(directory: p.join(docsDir.path, "obx-djs"));
-    final store = await openStore(directory:"memory:obx-djs");
+    final store = await openStore(directory: p.join(docsDir.path, "obx-djs"));
+    //final store = await openStore(directory:"memory:obx-djs");
+
     return ObjectBox._create(store);
   }
 }
