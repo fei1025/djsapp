@@ -11,8 +11,8 @@ import 'ObjectBoxData.dart';
 class ObjectBox {
   /// The Store of this app.
   late final Store store;
-  late final Box<TimeData> timeDataBox;
-  late final Box<SystemSettings> systemSettings;
+   late final Box<TimeData> timeDataBox;
+   late final Box<SystemSettings> systemSettings;
 
 
   ObjectBox._create(this.store) {

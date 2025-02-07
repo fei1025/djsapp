@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ShowTime extends StatefulWidget {
   final Function(int save) success;
@@ -42,7 +43,7 @@ class _ShowTimeState
               children: [
                 ElevatedButton(
                   onPressed: () => Navigator.of(context).pop(), // 返回按钮
-                  child: const Text('返回'),
+                  child:  Text(AppLocalizations.of(context)!.cancel),
                 ),
                 ElevatedButton(
                   onPressed: () {
@@ -53,7 +54,7 @@ class _ShowTimeState
                     widget.success(_date.inSeconds);
                     Navigator.of(context).pop(); // 确认并返回选中的时间
                   },
-                  child: const Text('确认'),
+                  child: Text(AppLocalizations.of(context)!.ok),
                 ),
               ],
             ),

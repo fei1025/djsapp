@@ -1,7 +1,11 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_demo/db/model/ObjectBox.dart';
+import 'package:flutter_demo/db/model/ObjectBoxData.dart';
+import 'package:flutter_demo/db/overallModel.dart';
 import 'package:flutter_demo/my_app_state.dart';
+import 'package:flutter_demo/objectbox.g.dart';
 import 'package:flutter_demo/page/TimerManager.dart';
 import 'package:flutter_demo/page/demo.dart';
 import 'package:flutter_demo/page/home_page.dart';
@@ -21,7 +25,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'page/my_time.dart';
 
 
-
+//flutter gen-l10n
 void main() async {
   await InitInfo().initializeData();
   runApp(
@@ -54,12 +58,16 @@ class _CountdownPageState extends State<CountdownPage> {
   List<Widget>? pages;
   int _selectedIndex = 0;
 
+
   @override
   void initState() {
     WidgetsFlutterBinding.ensureInitialized();
     HomeWidget.registerInteractivityCallback(interactiveCallback);
+    TimeData timeData =objectbox.timeDataBox.query(TimeData_.izDefault.equals("0")).build().findFirst()??TimeData(remainingSeconds:20);
+    _remainingSeconds=timeData.remainingSeconds!;
     HomePage homepage= HomePage(() {
-      _remainingSeconds=20+1;
+      timeData =objectbox.timeDataBox.query(TimeData_.izDefault.equals("0")).build().findFirst()??TimeData(remainingSeconds:20);
+      _remainingSeconds=timeData.remainingSeconds!+1;
       _timer?.cancel();
       _startCountdown();
     });

@@ -32,6 +32,13 @@ class _MyTimePageState extends State<MyTimePage> {
       context.read<MyAppState>().setTimeDataList(timeDataList);
     });
   }
+  loadList(){
+    List<TimeData> timeDataList =[];
+    _getBox().getAll().forEach((action) {
+      timeDataList.add(action);
+    });
+    context.read<MyAppState>().setTimeDataList(timeDataList);
+  }
 
 
   @override
@@ -51,7 +58,10 @@ class _MyTimePageState extends State<MyTimePage> {
   _createTimerDate() {
     final _formKey = GlobalKey<FormState>();
     final TextEditingController _timeController = TextEditingController();
-     int? time1 = null;
+    final TextEditingController _titleController = TextEditingController();
+    TimeData timeData = TimeData();
+
+    int? time1 = null;
     showDialog(
         context: context,
         builder: (context) {
@@ -66,9 +76,16 @@ class _MyTimePageState extends State<MyTimePage> {
                     child: Column(
                       children: [
                         TextFormField(
+                            controller: _titleController,
                             decoration: InputDecoration(
-                          labelText: "title",
-                        )),
+                            labelText: "title",
+                        ),
+                          onSaved: (value) {
+                            // 保存输入的值
+                            timeData.titleName = value;
+                          },
+
+                        ),
                         TextFormField(
                           controller: _timeController,
                           onTap: () async {
@@ -83,6 +100,7 @@ class _MyTimePageState extends State<MyTimePage> {
                                     final minutes = ((time % 3600) ~/ 60).toString().padLeft(2, '0'); // 计算分钟
                                     final seconds = (time % 60).toString().padLeft(2, '0'); // 计算秒
                                     _timeController.text = "$hours:$minutes:$seconds"; // 更新到输入框
+                                    timeData.remainingSeconds = time;
                                   });
                                 });
                               },
@@ -103,15 +121,17 @@ class _MyTimePageState extends State<MyTimePage> {
             actions: [
               TextButton(
                   onPressed: () {
-                    if(_formKey.currentState!.validate()){
-                      _formKey.currentState!.save();
-                    }
+
                     Navigator.of(context).pop();
                   },
 
                   child: Text(AppLocalizations.of(context)!.cancel)),
               TextButton(
                   onPressed: () {
+                    if(_formKey.currentState!.validate()){
+                      _formKey.currentState!.save();
+                      addTimeData(context,timeData);
+                    }
                     Navigator.of(context).pop();
                   },
                   child: Text(AppLocalizations.of(context)!.save)),
@@ -120,7 +140,7 @@ class _MyTimePageState extends State<MyTimePage> {
         });
   }
 
-
+  bool isSwitched = false;
 
   @override
   Widget build(BuildContext context) {
@@ -128,21 +148,86 @@ class _MyTimePageState extends State<MyTimePage> {
     List<TimeData>  list  = appState.timeDataList;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('My Time'), actions: <Widget>[
-        IconButton(
-          icon: Icon(Icons.add),
-          onPressed: () {
-            _createTimerDate();
-          },
-        )
-      ]),
+      appBar: AppBar(title: const Text('My Time'),
+        ),
       body:  ListView.builder(
         itemCount: list.length,
         itemBuilder: (context, index) {
+          String timeText="";
+          if(list[index].remainingSeconds!=null){
+            int time=list[index].remainingSeconds!;
+            final hours = (time ~/ 3600).toString().padLeft(2, '0'); // 计算小时
+            final minutes = ((time % 3600) ~/ 60).toString().padLeft(2, '0'); // 计算分钟
+            final seconds = (time % 60).toString().padLeft(2, '0'); // 计算秒
+            timeText = "$hours:$minutes:$seconds"; // 更新到输入框
+          }
+          TimeData data = list[index];
           return Card(
             elevation: 3.0,
             child: ListTile(
-              title: Text(list[index].titleName ?? ""),
+              title: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
+                            children: [
+                              Text("标题: "),
+                              Text(list[index].titleName.toString()),
+
+                            ],
+                          ),
+                          TextButton(onPressed: (){
+                            deleteTimeData(context,data);
+                          }, child: Text("删除"))
+                        ],
+                      ),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text("时间: "),
+                          Text(timeText),
+                        ],
+                      ),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Padding(
+                            padding:  EdgeInsets.only(top: 8),
+                            child: Text("设置为默认:", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                          ),
+                          const SizedBox(height: 8), //
+                          Switch(
+                            value: data.izDefault=="0" ? true : false,
+                            activeColor: Colors.green, // 选中时的颜色
+                            inactiveThumbColor: Colors.grey, // 未选中时的按钮颜色
+                            inactiveTrackColor: Colors.grey[300], // 未选中时的轨道颜色
+                            onChanged: (value) {
+                              setState(() {
+                                isSwitched = value;
+                                if(isSwitched){
+                                  data.izDefault="0";
+                                }else{
+                                  data.izDefault="1";
+                                }
+                                setdefault(context,data);
+                              });
+                            },
+                          ),
+                        ],
+                      ),
+
+
+                    ],
+                  ),
+
+                ],
+              ),
               onTap: () {
                 // 处理点击事件
               },
@@ -155,7 +240,9 @@ class _MyTimePageState extends State<MyTimePage> {
             //Navigator.push(context,MaterialPageRoute(builder: (context) => DemoPage()));
             print("object");
 
-            addTimeData(context);
+            //addTimeData(context);
+            _createTimerDate();
+
 
           },
           child: const Icon(Icons.add),
@@ -164,12 +251,12 @@ class _MyTimePageState extends State<MyTimePage> {
   }
 
 
-  void addTimeData(BuildContext context) {
+  void addTimeData(BuildContext context,TimeData timeData) {
     var appState = Provider.of<MyAppState>(context, listen: false);
 
     // 创建新的 TimeData 实例
-    TimeData timeData = TimeData();
-    timeData.titleName = "title";
+    //TimeData timeData = TimeData();
+    //timeData.titleName = "title";
 
     // 创建新的列表，避免直接修改原列表
     List<TimeData> updatedList = List.from(appState.timeDataList);
@@ -178,6 +265,36 @@ class _MyTimePageState extends State<MyTimePage> {
     // 设置新的列表
     appState.setTimeDataList(updatedList);
     _getBox().put(timeData);
+  }
+
+  void setdefault(BuildContext context,TimeData timeData) {
+    var appState = Provider.of<MyAppState>(context, listen: false);
+    //
+    // // 创建新的列表，避免直接修改原列表
+    // List<TimeData> updatedList = List.from(appState.timeDataList);
+    // updatedList.add(timeData);
+    // // 全部设置为非默认
+    // updatedList.forEach((element) {
+    //   element.izDefault="1";
+    // });
+
+    //数据全部更新
+    //_getBox().putMany(updatedList);
+    _getBox().put(timeData);
+    //加载新的数据
+    loadList();
+
+  }
+
+  void deleteTimeData(BuildContext context,TimeData timeData) {
+    var appState = Provider.of<MyAppState>(context, listen: false);
+    // 创建新的列表，避免直接修改原列表
+    List<TimeData> updatedList = List.from(appState.timeDataList);
+    updatedList.remove(timeData);
+
+    // 设置新的列表
+    appState.setTimeDataList(updatedList);
+    _getBox().remove(timeData.id);
   }
 
 

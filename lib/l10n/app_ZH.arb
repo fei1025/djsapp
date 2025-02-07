@@ -3,5 +3,6 @@
     "myTime": "我的时间",
     "cancel": "取消",
     "save": "保存",
-    "createTime": "创建倒计时"
+    "createTime": "创建倒计时",
+    "ok": "确定"
 }
