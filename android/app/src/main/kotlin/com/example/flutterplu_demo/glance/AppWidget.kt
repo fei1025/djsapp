@@ -60,6 +60,21 @@ class AppWidget : GlanceAppWidget() {
                 modifier = GlanceModifier.fillMaxWidth().background(Color.White),
                 verticalAlignment = Alignment.CenterVertically // 修正为垂直对齐
             ) {
+                // 获取当前可用宽度
+                val availableWidthDp = LocalSize.current.width
+                // 按钮宽度和间距定义
+                val buttonWidth = 100.dp
+                val spacing = 8.dp
+
+
+
+
+                // 计算每行最多按钮数（至少1个）
+                val maxPerRow = ((availableWidthDp ) / (buttonWidth )).toInt().coerceAtLeast(1)
+
+
+
+
                 Text(
                     text = "标题",
                     style = TextStyle(fontSize = 18.sp, fontWeight = FontWeight.Bold),
@@ -69,9 +84,17 @@ class AppWidget : GlanceAppWidget() {
 
                 Button(
                     text = "+",
-                    onClick = actionStartActivity<MainActivity>(
+                    onClick =     actionStartActivity<MainActivity>(
                         context,
-                        Uri.parse("homeWidgetExample://message?message={'type':'addTime'}")
+                        Uri.parse("homeWidgetExample://message?availableWidthDp=$availableWidthDp")
+                    ), // 点击启动主页面
+                    modifier = GlanceModifier.size(40.dp)
+                )
+                Button(
+                    text = "o",
+                    onClick =     actionStartActivity<MainActivity>(
+                        context,
+                        Uri.parse("homeWidgetExample://message?maxPerRow=$maxPerRow")
                     ), // 点击启动主页面
                     modifier = GlanceModifier.size(40.dp)
                 )
@@ -81,44 +104,52 @@ class AppWidget : GlanceAppWidget() {
                     .background(Color.White.copy(alpha = 0.5f))
             ) {
                 Column(
-                    modifier = GlanceModifier.fillMaxSize().padding(8.dp) ,
-                    verticalAlignment = Alignment.Top,
-                    horizontalAlignment = Alignment.Start
+                    modifier = GlanceModifier.fillMaxSize()
 
-                ){
+                ) {
                     val buttons = listOf("Button 1", "Button 2", "Button 3", "Button 4", "Button 5")
                     // 获取当前可用宽度
                     val availableWidthDp = LocalSize.current.width
                     // 按钮宽度和间距定义
-                    val buttonWidth = 100.dp
-                    val spacing = 8.dp
+                    val buttonWidth = 20.dp
+                    val spacing = 5.dp
+
+                    actionStartActivity<MainActivity>(
+                        context,
+                        Uri.parse("homeWidgetExample://message?availableWidthDp=$availableWidthDp")
+                    )
+
 
                     // 计算每行最多按钮数（至少1个）
-                    val maxPerRow = ((availableWidthDp + spacing) / (buttonWidth + spacing)).toInt().coerceAtLeast(1)
+                    //val maxPerRow = ((availableWidthDp +spacing) / (buttonWidth +spacing)).toInt().coerceAtLeast(1)
+                    val maxPerRow = 3
+                    actionStartActivity<MainActivity>(
+                        context,
+                        Uri.parse("homeWidgetExample://message?maxPerRow=$maxPerRow")
+                    )
 
-                    buttons.chunked(maxPerRow).forEach {rowItems->
+                    buttons.chunked(maxPerRow).forEach { rowItems ->
                         Row(
-                            modifier = GlanceModifier.fillMaxWidth().padding(vertical = 4.dp),
+                            modifier = GlanceModifier.fillMaxWidth(),
                             horizontalAlignment = Alignment.Start,
-                            verticalAlignment = Alignment.CenterVertically
-                        ){
-                            rowItems.forEachIndexed {
-                                index, item ->
+                        ) {
+                            rowItems.forEachIndexed { index, item ->
                                 Button(
                                     text = item,
                                     onClick = actionStartActivity<MainActivity>(
                                         context,
                                         Uri.parse("homeWidgetExample://message?message={'type':'addTime'}")
                                     ),
-                                    modifier = GlanceModifier.width(20.dp) .padding(end = if (index != rowItems.lastIndex) spacing else 0.dp)
                                 )
+                                Spacer(modifier = GlanceModifier.height(8.dp)) // 行间距
 
                             }
                         }
 
                     }
-                }
 
+
+                }
             }
 
         }
