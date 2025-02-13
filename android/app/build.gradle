@@ -57,6 +57,4 @@ dependencies {
     implementation "androidx.multidex:multidex:2.0.1"
     implementation 'androidx.glance:glance:1.0.0'
     implementation 'androidx.glance:glance-appwidget:1.0.0'
-
-
 }

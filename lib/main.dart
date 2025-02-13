@@ -63,6 +63,7 @@ class _CountdownPageState extends State<CountdownPage> {
   void initState() {
     WidgetsFlutterBinding.ensureInitialized();
     HomeWidget.registerInteractivityCallback(interactiveCallback);
+
     TimeData timeData =objectbox.timeDataBox.query(TimeData_.izDefault.equals("0")).build().findFirst()??TimeData(remainingSeconds:20);
     _remainingSeconds=timeData.remainingSeconds!;
     HomePage homepage= HomePage(() {

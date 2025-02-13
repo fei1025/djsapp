@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 Future<void> interactiveCallback(Uri? data) async {
 
   print("------------------------------------------------------------------");
-  print("data?.host:${data?.host}");
+  print("data11111111111111111?.host:${data?.host}");
 
   // if (data?.host == 'titleclicked') {
   //   final greetings = [
