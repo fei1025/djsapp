@@ -60,6 +60,12 @@ class AppWidget : GlanceAppWidget() {
                 modifier = GlanceModifier.fillMaxWidth().background(Color.White),
                 verticalAlignment = Alignment.CenterVertically // 修正为垂直对齐
             ) {
+
+
+
+
+
+
                 // 获取当前可用宽度
                 val availableWidthDp = LocalSize.current.width
                 // 按钮宽度和间距定义
@@ -68,6 +74,12 @@ class AppWidget : GlanceAppWidget() {
 
                 // 计算每行最多按钮数（至少1个）
                 val maxPerRow = ((availableWidthDp ) / (buttonWidth )).toInt().coerceAtLeast(1)
+
+
+
+
+
+
 
                 Text(
                     text = "标题",
@@ -78,14 +90,16 @@ class AppWidget : GlanceAppWidget() {
 
                 Button(
                     text = "+",
-                    onClick =     actionStartActivity<MainActivity>(
-                        context,
-                        Uri.parse("homeWidgetExample://message?availableWidthDp=$availableWidthDp")
-                    ), // 点击启动主页面
-                    modifier = GlanceModifier.size(40.dp)
-                )
-                Button(
-                    text = "o",
+                    onClick = actionStartActivity<MainActivity>(
+                        onClick =     actionStartActivity<MainActivity>(
+                            context,
+                            Uri.parse("homeWidgetExample://message?message={'type':'addTime'}")
+                                    Uri.parse("homeWidgetExample://message?availableWidthDp=$availableWidthDp")
+                        ), // 点击启动主页面
+                        modifier = GlanceModifier.size(40.dp)
+                    )
+                            Button(
+                            text = "o",
                     onClick =     actionStartActivity<MainActivity>(
                         context,
                         Uri.parse("homeWidgetExample://message?maxPerRow=$maxPerRow")
@@ -96,52 +110,68 @@ class AppWidget : GlanceAppWidget() {
 
 
             Box(
-                modifier = GlanceModifier.fillMaxWidth().fillMaxHeight().padding(8.dp)
+                modifier = GlanceModifier
+                    .fillMaxWidth().fillMaxHeight().padding(8.dp)
+                        modifier = GlanceModifier.fillMaxWidth().fillMaxHeight().padding(8.dp)
                     .background(Color.White.copy(alpha = 0.5f))
             ) {
+                val maxButtonsPerRow = 5 // 每行最多显示的按钮数量
                 Column(
                     modifier = GlanceModifier.fillMaxSize()
 
-                ) {
-                    val buttons = listOf("Button 1", "Button 2", "Button 3", "Button 4", "Button 5")
-                    // 获取当前可用宽度
-                    val availableWidthDp = LocalSize.current.width
-                    // 按钮宽度和间距定义
-                    val buttonWidth = 100.dp
-                    val spacing = 5.dp
-                    // 计算每行最多按钮数（至少1个）
-                    val maxPerRow = ((availableWidthDp ) / (buttonWidth )).toInt().coerceAtLeast(1)
-                    Spacer(modifier = GlanceModifier.height(3.dp)) // 行间距
-                    buttons.chunked(maxPerRow).forEach { rowItems ->
-                        Row(
-                            modifier = GlanceModifier.fillMaxWidth(),
-                        ) {
-                            rowItems.forEachIndexed { index, item ->
-                                Button(
-                                    text = item,
-                                    onClick = actionStartActivity<MainActivity>(
-                                        context,
-                                        Uri.parse("homeWidgetExample://message?message=$maxPerRow")
-                                    ),
-                                    modifier = GlanceModifier.width(buttonWidth) // 设置按钮宽度为 200dp
+                    // 按钮部分：手动换行
+                    val dataList = listOf("按钮1", "按钮2", "按钮3", "按钮4", "按钮5") // 示例数据
+                dataList.chunked(maxButtonsPerRow).forEach { rowButtons ->
+                    Row(
+                        modifier = GlanceModifier.fillMaxWidth(),
+                        horizontalAlignment = Alignment.Start
+                    ) {
+                        rowButtons.forEach { item ->
+                            Button(
+                                text = item,
+                                onClick = actionStartActivity<MainActivity>(
+                                    context,
+                                    Uri.parse("homeWidgetExample://message?message=$item")
+                                ),
+                                modifier = GlanceModifier.padding(4.dp)
+                            )
+                            ) {
+                            val buttons = listOf("Button 1", "Button 2", "Button 3", "Button 4", "Button 5")
+                            // 获取当前可用宽度
+                            val availableWidthDp = LocalSize.current.width
+                            // 按钮宽度和间距定义
+                            val buttonWidth = 100.dp
+                            val spacing = 5.dp
+                            // 计算每行最多按钮数（至少1个）
+                            val maxPerRow = ((availableWidthDp ) / (buttonWidth )).toInt().coerceAtLeast(1)
+                            Spacer(modifier = GlanceModifier.height(3.dp)) // 行间距
+                            buttons.chunked(maxPerRow).forEach { rowItems ->
+                                Row(
+                                    modifier = GlanceModifier.fillMaxWidth(),
+                                ) {
+                                    rowItems.forEachIndexed { index, item ->
+                                        Button(
+                                            text = item,
+                                            onClick = actionStartActivity<MainActivity>(
+                                                context,
+                                                Uri.parse("homeWidgetExample://message?message=$maxPerRow")
+                                            ),
+                                            modifier = GlanceModifier.width(buttonWidth) // 设置按钮宽度为 200dp
 
-                                )
-                                Spacer(modifier = GlanceModifier.width(2.dp)) // 行间距
+                                        )
+                                        Spacer(modifier = GlanceModifier.width(2.dp)) // 行间距
+                                    }
+                                }
+                                Spacer(modifier = GlanceModifier.height(10.dp)) // 行间距
                             }
+                            Spacer(modifier = GlanceModifier.height(8.dp)) // 行间距
+
+
+                        }
                         }
 
-
-                        Spacer(modifier = GlanceModifier.height(10.dp)) // 行间距
-
-
                     }
-
-
                 }
             }
-
-        }
-    }
-}
 
 
