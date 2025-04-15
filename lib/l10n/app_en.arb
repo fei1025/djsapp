@@ -1,9 +1,21 @@
 {
+  "@@locale": "en",
   "helloWorld": "Hello World!",
-  "myTime": "Time",
+  "myTime": "My Time",
   "cancel": "Cancel",
   "save": "Save",
   "createTime": "Create timer",
-  "ok": "OK"
+  "ok": "OK",
+  "title": "Title",
+  "pleaseEnterTitle":"Please enter a title",
+  "time":"Time",
+  "pleaseSelectValidTimeNotZero":"Please select a valid time that is not less than zero.",
+  "delete":"delete",
+  "setDefault":"Set as default",
+  "stopAndExit":"Stop and Exit",
+   "tip":"Tip",
+   "timeNotEq0":"Time cannot be less than or equal to 0",
+   "serviceIsRunning":"Service is running",
+   "home":"Home"
 
 }

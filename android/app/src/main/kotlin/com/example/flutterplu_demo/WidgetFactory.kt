@@ -9,6 +9,8 @@ import org.json.JSONArray
 import org.json.JSONObject
 import es.antonborri.home_widget.HomeWidgetBackgroundIntent
 import android.net.Uri
+import android.util.Log
+import es.antonborri.home_widget.HomeWidgetLaunchIntent
 
 
 class WidgetFactory(
@@ -49,14 +51,14 @@ class WidgetFactory(
         // 设置按钮的标题
         views.setTextViewText(R.id.widget_button, title)
 
-        // 创建按钮点击事件，传递 id
-        val clickIntent = Intent().apply {
-            putExtra("button_id", id)
-            action = "com.example.flutterplu_demo.BUTTON_CLICK"
+        // 为每个按钮设置填充意图，确保正确启动应用
+        // 创建 fillInIntent
+        val fillInIntent = Intent(Intent.ACTION_VIEW).apply {
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
+            data = Uri.parse("homeWidgetExample://button?id=$id&title=$title")
         }
-        val backgroundIntent =HomeWidgetBackgroundIntent.getBroadcast( context, Uri.parse("homeWidgetExample://$id"))
 
-        views.setOnClickPendingIntent(R.id.widget_button, backgroundIntent)
+        views.setOnClickFillInIntent(R.id.widget_button, fillInIntent)
 
         return views
     }

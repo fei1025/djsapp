@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_demo/db/model/ObjectBox.dart';
 import 'package:flutter_demo/db/model/ObjectBoxData.dart';
 import 'package:flutter_demo/db/overallModel.dart';
@@ -15,6 +16,7 @@ import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
 import 'package:home_widget/home_widget.dart';
 import 'package:provider/provider.dart';
 import 'dart:io';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'package:wakelock_plus/wakelock_plus.dart';
 
@@ -24,10 +26,11 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'page/my_time.dart';
 
-
 //flutter gen-l10n
 void main() async {
   await InitInfo().initializeData();
+  final systemLocale = WidgetsBinding.instance.platformDispatcher.locale;
+
   runApp(
     ChangeNotifierProvider(
       create: (_) => MyAppState(),
@@ -39,9 +42,17 @@ void main() async {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final locale = context.watch<MyAppState>().locale;
+
     return MaterialApp(
-      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      locale: locale,
       supportedLocales: AppLocalizations.supportedLocales,
+      localizationsDelegates: const [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
       home: CountdownPage(),
     );
   }
@@ -54,44 +65,48 @@ class CountdownPage extends StatefulWidget {
 
 class _CountdownPageState extends State<CountdownPage> {
   int _remainingSeconds = 20; // 5 minutes
+  int _curRemainingSeconds =0;
   Timer? _timer;
   List<Widget>? pages;
   int _selectedIndex = 0;
-
 
   @override
   void initState() {
     WidgetsFlutterBinding.ensureInitialized();
     HomeWidget.registerInteractivityCallback(interactiveCallback);
 
-    TimeData timeData =objectbox.timeDataBox.query(TimeData_.izDefault.equals("0")).build().findFirst()??TimeData(remainingSeconds:20);
-    _remainingSeconds=timeData.remainingSeconds!;
-    HomePage homepage= HomePage(() {
-      timeData =objectbox.timeDataBox.query(TimeData_.izDefault.equals("0")).build().findFirst()??TimeData(remainingSeconds:20);
-      _remainingSeconds=timeData.remainingSeconds!+1;
+    // 设置 MethodChannel 接收器
+    var channel = const MethodChannel('com.example.flutterplu_demo/widget_click');
+    channel.setMethodCallHandler(_handleMethodCall);
+    TimeData timeData = objectbox.timeDataBox .query(TimeData_.izDefault.equals("0")) .build() .findFirst() ??TimeData(remainingSeconds: 20);
+     _remainingSeconds = timeData.remainingSeconds!;
+     _curRemainingSeconds=_remainingSeconds;
+    HomePage homepage = HomePage(() {
+      _remainingSeconds = _curRemainingSeconds ;
+      print("_remainingSeconds${_remainingSeconds}");
       _timer?.cancel();
       _startCountdown();
     });
-   // 当前选中的索引
+    // 当前选中的索引
     pages = [
-      Center(child:homepage),
+      Center(child: homepage),
       const Center(child: MyTimePage()),
-      const Center(child: CustomCupertinoTimerPicker()),
+      //const Center(child: CustomCupertinoTimerPicker()),
     ];
-
     // 开启前台服务
-   // _startPedometerService();
+     _startPedometerService();
     // 开始倒计时
     _startCountdown();
     super.initState();
-
   }
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     _checkForWidgetLaunch();
     HomeWidget.widgetClicked.listen(_launchedFromWidget);
   }
+
   void _checkForWidgetLaunch() {
     HomeWidget.initiallyLaunchedFromHomeWidget().then(_launchedFromWidget);
   }
@@ -100,16 +115,15 @@ class _CountdownPageState extends State<CountdownPage> {
     //点击某个按钮会进来
     print("uri----------------------:$uri");
     if (uri != null) {
-      showDialog(
-        context: context,
-        builder: (buildContext) => AlertDialog(
-          title: const Text('App started from HomeScreenWidget'),
-          content: Text('Here is the URI: $uri'),
-        ),
-      );
+      // showDialog(
+      //   context: context,
+      //   builder: (buildContext) => AlertDialog(
+      //     title: const Text('App started from HomeScreenWidget'),
+      //     content: Text('Here is the URI: $uri'),
+      //   ),
+      // );
     }
   }
-
 
   void _startPedometerService() async {
     try {
@@ -126,8 +140,7 @@ class _CountdownPageState extends State<CountdownPage> {
   }
 
   void _startCountdown() {
-    //WakelockPlus.enable();
-
+    WakelockPlus.enable();
     _timer = Timer.periodic(Duration(seconds: 1), (timer) {
       if (_remainingSeconds > 0) {
         setState(() {
@@ -136,8 +149,8 @@ class _CountdownPageState extends State<CountdownPage> {
         });
       } else {
         timer.cancel();
-       // _playAlarm();
-       // WakelockPlus.disable();
+         _playAlarm();
+         WakelockPlus.disable();
       }
     });
   }
@@ -146,14 +159,6 @@ class _CountdownPageState extends State<CountdownPage> {
     FlutterRingtonePlayer().playAlarm();
   }
 
-  void _stopAlarmAndExit() {
-    FlutterRingtonePlayer().stop();
-    if (Platform.isAndroid) {
-      exit(0);
-    } else if (Platform.isIOS) {
-      exit(0);
-    }
-  }
 
   @override
   void dispose() {
@@ -166,28 +171,51 @@ class _CountdownPageState extends State<CountdownPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: pages![_selectedIndex],
-        bottomNavigationBar:BottomNavigationBar(
+        body: pages![_selectedIndex],
+        bottomNavigationBar: BottomNavigationBar(
           currentIndex: _selectedIndex, // 当前选中的索引
           onTap: (index) {
             setState(() {
-              _selectedIndex= index;
+              _selectedIndex = index;
             });
           },
-          items:  [
-          const BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: '首页',
-          ),
-          BottomNavigationBarItem(
-            icon: const Icon(Icons.timer_outlined),
-            label: AppLocalizations.of(context)!.myTime,
-          ),
-          BottomNavigationBarItem(
-            icon: const Icon(Icons.timer_outlined),
-            label: AppLocalizations.of(context)!.myTime,
-          ),
-        ],)
-    );
+          items: [
+             BottomNavigationBarItem(
+              icon: const Icon(Icons.home),
+              label: AppLocalizations.of(context)!.home,
+            ),
+            BottomNavigationBarItem(
+              icon: const Icon(Icons.timer_outlined),
+              label: AppLocalizations.of(context)!.myTime,
+            ),
+            // BottomNavigationBarItem(
+            //   icon: const Icon(Icons.timer_outlined),
+            //   label: AppLocalizations.of(context)!.myTime,
+            // ),
+          ],
+        ));
+  }
+
+  // 处理从 MethodChannel 接收的消息
+  Future<void> _handleMethodCall(MethodCall call) async {
+    print("收到 MethodChannel 消息: ${call.method}");
+    if (call.method == 'widgetClicked') {
+      final Map<Object?, Object?> args = call.arguments;
+      final String host = args['host'] as String;
+      final Map<Object?, Object?> params =
+          args['params'] as Map<Object?, Object?>;
+
+
+      if (host == 'button') {
+        final buttonId = params['id'];
+        final buttonTitle = params['title'];
+        final buttonId1 = int.tryParse(buttonId.toString());
+        TimeData timeData = objectbox.timeDataBox .query(TimeData_.id.equals(buttonId1!)) .build() .findFirst()!;
+        _remainingSeconds = timeData.remainingSeconds!;
+        _curRemainingSeconds=_remainingSeconds;
+        _timer?.cancel();
+        _startCountdown();
+      }
+    }
   }
 }

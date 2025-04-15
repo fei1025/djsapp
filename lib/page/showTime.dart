@@ -70,14 +70,14 @@ class _ShowTimeState
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('提示'),
-          content: Text('时间不能小于等于0'),
+          title: Text(AppLocalizations.of(context)!.tip),
+          content: Text(AppLocalizations.of(context)!.timeNotEq0),
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop(); // 关闭对话框
               },
-              child: Text('确定'),
+              child: Text(AppLocalizations.of(context)!.ok),
             ),
           ],
         );

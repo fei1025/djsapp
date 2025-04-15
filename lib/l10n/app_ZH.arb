@@ -1,8 +1,21 @@
 {
+  "@@locale": "zh",
     "helloWorld": "你好，世界",
     "myTime": "我的时间",
     "cancel": "取消",
     "save": "保存",
     "createTime": "创建倒计时",
-    "ok": "确定"
+    "ok": "确定",
+    "title":"标题",
+    "pleaseEnterTitle":"请输入标题",
+    "time":"时间",
+    "pleaseSelectValidTimeNotZero":"请选择时间,或者时间不能小于0",
+    "delete":"删除",
+    "setDefault":"设置成默认",
+    "stopAndExit":"停止并退出",
+    "tip":"提示",
+    "timeNotEq0":"时间不能小于等于0",
+    "serviceIsRunning":"服务正在运行",
+    "home":"首页"
+
 }

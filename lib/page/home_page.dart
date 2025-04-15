@@ -1,12 +1,18 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_demo/db/overallModel.dart';
 import 'package:flutter_demo/my_app_state.dart';
+import 'package:flutter_demo/utildata/widget_data_helper.dart';
+import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
 import 'package:home_widget/home_widget.dart';
 import 'package:provider/provider.dart';
 
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
+import '../db/model/ObjectBoxData.dart';
 
 class HomePage extends StatefulWidget {
 
@@ -20,21 +26,29 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  final List<Map<String, dynamic>> buttonList = [];
+
   //TimerManager _timerManager = TimerManager(20);
   @override
   void initState() {
     // TODO: implement initState
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+
+      initData();
+    });
     super.initState();
   }
-  final List<Map<String, dynamic>> buttonList = [
-    {"title": "按钮1", "id": 101},
-    {"title": "按钮2", "id": 102},
-    {"title": "按钮3", "id": 103},
-    {"title": "按钮4", "id": 104},
-    {"title": "按钮5", "id": 105},
-    {"title": "按钮6", "id": 106},
-    {"title": "按钮7", "id": 107},
-  ];
+
+  void initData(){
+    //loadTime();
+    //updateWidget();
+
+    loadAndUpdateWidgetData();
+  }
+
+  void loadTime(){
+
+  }
 
   Future<void> updateWidget() async {
     // 将对象数组转换为 JSON 字符串
@@ -45,6 +59,16 @@ class _HomePageState extends State<HomePage> {
     await HomeWidget.updateWidget(name: 'HomeWidgetExampleProvider');
     //HomeWidget.updateWidget(qualifiedAndroidName:'es.antonborri.home_widget_example.glance.HomeWidgetReceiver', );
   }
+
+  void _stopAlarmAndExit() {
+    FlutterRingtonePlayer().stop();
+    if (Platform.isAndroid) {
+      exit(0);
+    } else if (Platform.isIOS) {
+      exit(0);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final myAppState = Provider.of<MyAppState>(context);
@@ -71,8 +95,8 @@ class _HomePageState extends State<HomePage> {
               ),
               const SizedBox(height: 20),
               ElevatedButton(
-                onPressed: updateWidget,
-                child: const Text('更新小组件数据'),
+                onPressed: _stopAlarmAndExit,
+                child:  Text(AppLocalizations.of(context)!.stopAndExit),
               )
 
             ],

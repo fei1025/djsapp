@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_foreground_task/flutter_foreground_task.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 
 import 'pedometer_service_handler.dart';
@@ -90,8 +91,8 @@ class PedometerService {
     final ServiceRequestResult result =
         await FlutterForegroundTask.startService(
       serviceId: 500,
-      notificationTitle: 'Pedometer Service is running',
-      notificationText: '这是什么?',
+      notificationTitle: 'Service is running',
+      notificationText: '',
       notificationButtons: [    const NotificationButton(id: 'edit', text: 'edit'),
       ],
       callback: startPedometerService,
