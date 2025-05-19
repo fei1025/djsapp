@@ -16,7 +16,8 @@ jobs:
       # ✅ 安装 Flutter（你也可以指定特定版本）
       - uses: subosito/flutter-action@v2
         with:
-          flutter-version: "stable"
+          flutter-version: "3.5.4"
+          cache: true
 
       # ✅ 获取依赖
       - name: Install dependencies
