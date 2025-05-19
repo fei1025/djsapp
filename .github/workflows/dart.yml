@@ -27,6 +27,12 @@ jobs:
         
       - name: Build APK
         run: flutter build apk --release
+        
+      - name: Create version tag
+        run: |
+          git tag 'v1.0.1'  # 使用时间戳创建标签
+          git push origin --tags  # 推送标签到 GitHub
+        
       - name: Upload APK to Release
         uses: softprops/action-gh-release@v1
         with:
