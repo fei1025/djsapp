@@ -22,6 +22,8 @@ jobs:
       # ✅ 获取依赖
       - name: Install dependencies
         run: flutter pub get
+      - name: Install In18
+        run: flutter gen-l10n
         
       - name: Build APK
         run: flutter build apk --release
